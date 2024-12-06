@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -23,6 +24,10 @@ func contains(nums []int, val int) bool {
 func getMiddle(input []string) string {
 	return input[len(input)/2]
 }
+
+// func fixOrder(input []string, rules []string) []string {
+
+// }
 
 func day5part1() {
 
@@ -141,8 +146,8 @@ func day5part1() {
 func day5part2() {
 
 	// read inputs as two separate files
-	readFile, _ := os.Open("day5inputpart1.txt")
-	input, _ := os.Open("day5inputpart2.txt")
+	readFile, _ := os.Open("day5inputpart1.test")
+	input, _ := os.Open("day5inputpart2.test")
 
 	defer readFile.Close()
 	defer input.Close()
@@ -181,8 +186,10 @@ func day5part2() {
 		sort.Ints(rulesMap[k])
 	}
 
-	// var to store the valid rows
-	var correctRows [][]string
+	// var to store the rows after they have been fixed
+	var correctedRows [][]string
+	var indexToMove int
+	var indexOfNumInWrongOrder int
 
 	// iterate the rows to be checked
 	for inputScanner.Scan() {
@@ -218,7 +225,13 @@ func day5part2() {
 
 					// if found in the rule map, row is not in correct order
 					if contains(rulesMap[numParsed], parsedSearchNum) {
+						fmt.Println("rules for:", numParsed, rulesMap[numParsed])
+						fmt.Printf("numParsed: %d - parsedSearchNum: %d\n", numParsed, parsedSearchNum)
+						indexToMove = i
+						indexOfNumInWrongOrder = slices.Index(inputLine, v)
 						isCorrectOrder = false
+						break
+						// want to flip numParsed & parsedSearchNum in the original line
 					} else {
 						isCorrectOrder = true
 					}
@@ -229,7 +242,7 @@ func day5part2() {
 					}
 				}
 
-				// break from loop checking row since its already been declared broken
+				// break from loop checking row since its already been declared as correct
 				if !isCorrectOrder {
 					break
 				}
@@ -237,15 +250,17 @@ func day5part2() {
 		}
 
 		// push valid rows to results slice
-		if isCorrectOrder {
-			correctRows = append(correctRows, inputLine)
+		if !isCorrectOrder {
+			fmt.Println(inputLine)
+			fmt.Println("indexToMove", indexToMove, "indexOfNumInWrongOrder:", indexOfNumInWrongOrder)
+			correctedRows = append(correctedRows, inputLine)
 		}
 	}
 
 	// sum up middle numbers for each row
 	middleSum := 0
-	for i := range correctRows {
-		middleNum, _ := strconv.Atoi(getMiddle(correctRows[i]))
+	for i := range correctedRows {
+		middleNum, _ := strconv.Atoi(getMiddle(correctedRows[i]))
 		middleSum += middleNum
 	}
 
