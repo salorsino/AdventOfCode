@@ -2,5 +2,5 @@ package main
 
 func main() {
 	// iterate input
-	day6part1()
+	day9part1()
 }
