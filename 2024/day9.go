@@ -68,7 +68,7 @@ func day9part1() {
 	}
 	// sort the ints
 	sort.Ints(spaceIndicesSorted)
-	j := len(sVal) - 1
+	j := len(sVal) - 2
 	// iterate final string at indicies of free spaces
 	for _, idx := range spaceIndicesSorted {
 		if !strings.Contains(strings.Join(sVal, ""), ".") {
